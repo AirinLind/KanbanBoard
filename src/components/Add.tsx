@@ -1,3 +1,4 @@
+import Input from "./ui/Input";
 import "../styles/App.scss";
 
 interface AddProps {
@@ -15,7 +16,7 @@ function Add({ addTodo }: AddProps) {
 
   return (
     <div className="input_elem">
-      <input onKeyUp={handleKeyUp} placeholder="Добавить задачу..." />
+      <Input onKeyUp={handleKeyUp} placeholder="Добавить задачу..." />
     </div>
   );
 }

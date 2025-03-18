@@ -1,6 +1,9 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { PopupProps, Comment } from "../types";
 import "../styles/App.scss";
+import Modal from "./ui/Modal";
+import Input from "./ui/Input";
+import Button from "./ui/Button";
 
 const Popup: React.FC<PopupProps> = ({
   todo,
@@ -55,13 +58,20 @@ const Popup: React.FC<PopupProps> = ({
   );
 
   const handleSaveTitle = () => {
-    if (newTitle.trim()) updateTodoTitle(todo.id, newTitle);
-    else setNewTitle(todo.title);
+    if (newTitle.trim()) {
+      updateTodoTitle(todo.id, newTitle);
+    } else {
+      setNewTitle(todo.title);
+    }
     setIsEditing(false);
   };
 
   const handleSaveDescription = () => {
-    updateTodoDescription(todo.id, description);
+    if (description.trim()) {
+      updateTodoDescription(todo.id, description);
+    } else {
+      setDescription(todo.description || "");
+    }
     setIsEditingDesc(false);
   };
 
@@ -82,7 +92,7 @@ const Popup: React.FC<PopupProps> = ({
 
   const handleAddComment = () => {
     if (newComment.trim()) {
-      const comment = { text: newComment, author: authorName };
+      const comment: Comment = { text: newComment, author: authorName };
       addComment(todo.id, comment);
       setComments((prev) => [...prev, comment]);
       setNewComment("");
@@ -90,132 +100,115 @@ const Popup: React.FC<PopupProps> = ({
   };
 
   return (
-    <div className="popup-overlay" onClick={closePopup}>
-      <div className="popup" onClick={(e) => e.stopPropagation()}>
-        <div className="popup-header">
-          {isEditing ? (
-            <input
-              type="text"
-              value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
-              onBlur={handleSaveTitle}
-              onKeyDown={(e) => handleKeyDown(e, handleSaveTitle)}
-              autoFocus
-              className="title-input"
-            />
-          ) : (
-            <h2 className="popup-title" onClick={() => setIsEditing(true)}>
-              {newTitle}
-            </h2>
-          )}
-          <button
-            className="delete-btn"
-            onClick={() => {
-              deleteTodo(todo.id);
-              closePopup();
-            }}
-          >
-            Удалить
-          </button>
-
-          <button className="close-btn" onClick={closePopup}>
-            &times;
-          </button>
-        </div>
-
-        <div className="details">
-          <p>
-            <strong>Колонка:</strong> {columnTitle}
-          </p>
-          <p>
-            <strong>Автор:</strong> {todo.author}
-          </p>
-        </div>
-
-        <div className="description">
-          <h3>Описание</h3>
-          {isEditingDesc ? (
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              onBlur={handleSaveDescription}
-              onKeyDown={(e) => handleKeyDown(e, handleSaveDescription)}
-              autoFocus
-              className="description-input"
-            />
-          ) : (
-            <p
-              className="description-text"
-              onClick={() => setIsEditingDesc(true)}
-            >
-              {description || "Добавить описание..."}
-            </p>
-          )}
-          {description && (
-            <button
-              onClick={() =>{
-                setDescription("");
-                updateTodoDescription(todo.id, "")
-              }}
-            >
-              Удалить
-            </button>
-          )}
-        </div>
-
-        <div className="comments">
-          <h3>Комментарии</h3>
-          <ul>
-            {comments.map((comment, index) => (
-              <li key={index}>
-                {editingCommentIndex === index ? (
-                  <>
-                    <input
-                      type="text"
-                      value={editedCommentText}
-                      onChange={(e) => setEditedCommentText(e.target.value)}
-                      onBlur={handleSaveComment}
-                      onKeyDown={(e) => handleKeyDown(e, handleSaveComment)}
-                      autoFocus
-                    />
-                    <button onClick={handleSaveComment}>Сохранить</button>
-                  </>
-                ) : (
-                  <>
-                    <strong>{comment.author}:</strong>{" "}
-                    <span
-                      onClick={() =>{
-                        setEditingCommentIndex(index);
-                        setEditedCommentText(comment.text);
-                      }}
-                    >
-                      {comment.text}
-                    </span>
-                    <button
-                      onClick={() => {
-                        deleteComment(todo.id, index);
-                        setComments((prev) =>
-                          prev.filter((_, i) => i !== index)
-                        );
-                      }}
-                    >
-                      Удалить
-                    </button>
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
-          <input
-            type="text"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Добавить комментарий..."
+    <Modal onClose={closePopup}>
+      <div className="popup-header">
+        {isEditing ? (
+          <Input
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            onBlur={handleSaveTitle}
+            onKeyDown={(e) => handleKeyDown(e, handleSaveTitle)}
+            autoFocus
           />
-          <button onClick={handleAddComment}>Добавить</button>
-        </div>
+        ) : (
+          <h2 className="popup-title" onClick={() => setIsEditing(true)}>
+            {newTitle}
+          </h2>
+        )}
+        <Button
+          className="delete-btn"
+          onClick={() => {
+            deleteTodo(todo.id);
+            closePopup();
+          }}
+        >
+          Удалить
+        </Button>
+        <Button className="close-btn" onClick={closePopup}>
+          &times;
+        </Button>
       </div>
-    </div>
+
+      <div className="details">
+        <p>
+          <strong>Колонка:</strong> {columnTitle}
+        </p>
+        <p>
+          <strong>Автор:</strong> {todo.author}
+        </p>
+      </div>
+
+      <div className="description">
+        <h3>Описание</h3>
+        {isEditingDesc ? (
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            onBlur={handleSaveDescription}
+            onKeyDown={(e) => handleKeyDown(e, handleSaveDescription)}
+            autoFocus
+            className="description-input"
+          />
+        ) : (
+          <p className="description-text" onClick={() => setIsEditingDesc(true)}>
+            {description || "Добавить описание..."}
+          </p>
+        )}
+        {description && (
+          <Button onClick={() => setDescription("")}>Удалить</Button>
+        )}
+      </div>
+
+      <div className="comments">
+        <h3>Комментарии</h3>
+        <ul>
+          {comments.map((comment, index) => (
+            <li key={index}>
+              {editingCommentIndex === index ? (
+                <>
+                  <Input
+                    value={editedCommentText}
+                    onChange={(e) => setEditedCommentText(e.target.value)}
+                    onBlur={handleSaveComment}
+                    onKeyDown={(e) => handleKeyDown(e, handleSaveComment)}
+                    autoFocus
+                  />
+                  <Button onClick={handleSaveComment}>Сохранить</Button>
+                </>
+              ) : (
+                <>
+                  <strong>{comment.author}:</strong>{" "}
+                  <span
+                    onClick={() => {
+                      setEditingCommentIndex(index);
+                      setEditedCommentText(comment.text);
+                    }}
+                  >
+                    {comment.text}
+                  </span>
+                  <Button
+                    onClick={() => {
+                      deleteComment(todo.id, index);
+                      setComments((prev) =>
+                        prev.filter((_, i) => i !== index)
+                      );
+                    }}
+                  >
+                    Удалить
+                  </Button>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+        <Input
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="Добавить комментарий..."
+        />
+        <Button onClick={handleAddComment}>Добавить</Button>
+      </div>
+    </Modal>
   );
 };
 

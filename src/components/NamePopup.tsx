@@ -1,4 +1,7 @@
 import { useState } from "react";
+import Modal from "./ui/Modal";
+import Input from "./ui/Input";
+import Button from "./ui/Button";
 
 interface NamePopupProps {
   setUserName: (name: string) => void;
@@ -16,18 +19,11 @@ function NamePopup({ setUserName, closePopup }: NamePopupProps) {
   }
 
   return (
-    <div className="popup-overlay">
-      <div className="popup">
-        <h2>Введите ваше имя</h2>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Ваше имя..."
-        />
-        <button onClick={handleSave}>Сохранить</button>
-      </div>
-    </div>
+    <Modal onClose={closePopup}>
+      <h2>Введите ваше имя</h2>
+      <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ваше имя..." />
+      <Button onClick={handleSave}>Сохранить</Button>
+    </Modal>
   );
 }
 
