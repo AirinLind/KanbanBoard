@@ -1,9 +1,10 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { PopupProps, Comment } from "../types";
 import "../styles/App.scss";
-import Modal from "./ui/Modal";
-import Input from "./ui/Input";
-import Button from "./ui/Button";
+import Modal from "../ui/Modal";
+import Input from "../ui/Input";
+import Button from "../ui/Button";
+import { useEnterKey } from "../hooks/useHandleEnterPress";
 
 const Popup: React.FC<PopupProps> = ({
   todo,
@@ -23,39 +24,18 @@ const Popup: React.FC<PopupProps> = ({
   const [comments, setComments] = useState<Comment[]>(todo.comments);
   const [description, setDescription] = useState(todo.description || "");
   const [isEditingDesc, setIsEditingDesc] = useState(false);
-  const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(
-    null
-  );
+  const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(null);
   const [editedCommentText, setEditedCommentText] = useState("");
 
   const columnTitle = useMemo(
     () =>
-      columns.find((col) => col.id === todo.columnId)?.title ||
-      "Неизвестная колонка",
+      columns.find((col) => col.id === todo.columnId)?.title || "Неизвестная колонка",
     [columns, todo.columnId]
   );
 
   useEffect(() => {
     setComments([...todo.comments]);
   }, [todo.comments]);
-
-  useEffect(() => {
-    const handleEscPress = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closePopup();
-    };
-    document.addEventListener("keydown", handleEscPress);
-    return () => document.removeEventListener("keydown", handleEscPress);
-  }, [closePopup]);
-
-  const handleKeyDown = useCallback(
-    (
-      event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
-      saveFunction: () => void
-    ) => {
-      if (event.key === "Enter") saveFunction();
-    },
-    []
-  );
 
   const handleSaveTitle = () => {
     if (newTitle.trim()) {
@@ -80,9 +60,7 @@ const Popup: React.FC<PopupProps> = ({
       updateComment(todo.id, editingCommentIndex, editedCommentText);
       setComments((prev) =>
         prev.map((comment, index) =>
-          index === editingCommentIndex
-            ? { ...comment, text: editedCommentText }
-            : comment
+          index === editingCommentIndex ? { ...comment, text: editedCommentText } : comment
         )
       );
       setEditingCommentIndex(null);
@@ -99,6 +77,15 @@ const Popup: React.FC<PopupProps> = ({
     }
   };
 
+  useEnterKey(() => {
+    if (isEditing) handleSaveTitle();
+    if (isEditingDesc) handleSaveDescription();
+    if (editingCommentIndex !== null) handleSaveComment();
+    if (!isEditing && !isEditingDesc && editingCommentIndex === null && newComment.trim()) {
+      handleAddComment();
+    }
+  });
+
   return (
     <Modal onClose={closePopup}>
       <div className="popup-header">
@@ -107,7 +94,6 @@ const Popup: React.FC<PopupProps> = ({
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
             onBlur={handleSaveTitle}
-            onKeyDown={(e) => handleKeyDown(e, handleSaveTitle)}
             autoFocus
           />
         ) : (
@@ -145,7 +131,6 @@ const Popup: React.FC<PopupProps> = ({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             onBlur={handleSaveDescription}
-            onKeyDown={(e) => handleKeyDown(e, handleSaveDescription)}
             autoFocus
             className="description-input"
           />
@@ -154,9 +139,7 @@ const Popup: React.FC<PopupProps> = ({
             {description || "Добавить описание..."}
           </p>
         )}
-        {description && (
-          <Button onClick={() => setDescription("")}>Удалить</Button>
-        )}
+        {description && <Button onClick={() => setDescription("")}>Удалить</Button>}
       </div>
 
       <div className="comments">
@@ -170,7 +153,6 @@ const Popup: React.FC<PopupProps> = ({
                     value={editedCommentText}
                     onChange={(e) => setEditedCommentText(e.target.value)}
                     onBlur={handleSaveComment}
-                    onKeyDown={(e) => handleKeyDown(e, handleSaveComment)}
                     autoFocus
                   />
                   <Button onClick={handleSaveComment}>Сохранить</Button>
@@ -189,9 +171,7 @@ const Popup: React.FC<PopupProps> = ({
                   <Button
                     onClick={() => {
                       deleteComment(todo.id, index);
-                      setComments((prev) =>
-                        prev.filter((_, i) => i !== index)
-                      );
+                      setComments((prev) => prev.filter((_, i) => i !== index));
                     }}
                   >
                     Удалить

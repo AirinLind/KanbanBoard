@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Modal from "./ui/Modal";
-import Input from "./ui/Input";
-import Button from "./ui/Button";
+import Modal from "../ui/Modal";
+import Input from "../ui/Input";
+import Button from "../ui/Button";
 
 interface NamePopupProps {
   setUserName: (name: string) => void;

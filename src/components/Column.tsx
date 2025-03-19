@@ -3,7 +3,7 @@ import Add from "./Add";
 import Card from "./Card";
 import { Column as ColumnType, Todo } from "../types"
 import "../styles/App.scss";
-
+import Input from "../ui/Input";
 
 interface ColumnProps {
   column: ColumnType;
@@ -30,7 +30,7 @@ function Column({ column, todos, addTodo, updateColumnTitle, updateTodoTitle, se
   return (
     <div className="column">
       {isEditing ? (
-        <input
+        <Input
           type="text"
           value={newTitle}
           onChange={handleTitleChange}

@@ -193,24 +193,7 @@ body {
   margin-top: 5px;
 }
 
-.input_elem {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 16px;
-  input {
-    width: 100%;
-    max-width: 400px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: $border-radius;
-    font-size: 16px;
-    outline: none;
-    transition: border 0.2s;
-    &:focus {
-      border-color: $primary-color;
-    }
-  }
-}
+
 
 li {
   list-style-type: none;

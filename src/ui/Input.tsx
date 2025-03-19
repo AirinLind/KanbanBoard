@@ -1,6 +1,6 @@
 import React from "react";
-import "../../styles/App.scss";
-import { InputProps } from "../../types";
+import "../styles/App.scss";
+import { InputProps } from "../types";
 
 const Input: React.FC<InputProps> = ({
   type = "text",
