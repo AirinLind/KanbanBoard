@@ -1,12 +1,12 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, FC } from "react";
 import { PopupProps, Comment } from "../types";
 import "../styles/App.scss";
-import Modal from "../ui/Modal";
-import Input from "../ui/Input";
-import Button from "../ui/Button";
+import { Modal } from "../ui/Modal";
+import { Input } from "../ui/Input";
+import { Button } from "../ui/Button";
 import { useEnterKey } from "../hooks/useHandleEnterPress";
 
-const Popup: React.FC<PopupProps> = ({
+export const Popup: FC<PopupProps> = ({
   todo,
   closePopup,
   addComment,
@@ -24,12 +24,15 @@ const Popup: React.FC<PopupProps> = ({
   const [comments, setComments] = useState<Comment[]>(todo.comments);
   const [description, setDescription] = useState(todo.description || "");
   const [isEditingDesc, setIsEditingDesc] = useState(false);
-  const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(null);
+  const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(
+    null
+  );
   const [editedCommentText, setEditedCommentText] = useState("");
 
   const columnTitle = useMemo(
     () =>
-      columns.find((col) => col.id === todo.columnId)?.title || "Неизвестная колонка",
+      columns.find((col) => col.id === todo.columnId)?.title ||
+      "Неизвестная колонка",
     [columns, todo.columnId]
   );
 
@@ -60,7 +63,9 @@ const Popup: React.FC<PopupProps> = ({
       updateComment(todo.id, editingCommentIndex, editedCommentText);
       setComments((prev) =>
         prev.map((comment, index) =>
-          index === editingCommentIndex ? { ...comment, text: editedCommentText } : comment
+          index === editingCommentIndex
+            ? { ...comment, text: editedCommentText }
+            : comment
         )
       );
       setEditingCommentIndex(null);
@@ -81,7 +86,12 @@ const Popup: React.FC<PopupProps> = ({
     if (isEditing) handleSaveTitle();
     if (isEditingDesc) handleSaveDescription();
     if (editingCommentIndex !== null) handleSaveComment();
-    if (!isEditing && !isEditingDesc && editingCommentIndex === null && newComment.trim()) {
+    if (
+      !isEditing &&
+      !isEditingDesc &&
+      editingCommentIndex === null &&
+      newComment.trim()
+    ) {
       handleAddComment();
     }
   });
@@ -135,11 +145,16 @@ const Popup: React.FC<PopupProps> = ({
             className="description-input"
           />
         ) : (
-          <p className="description-text" onClick={() => setIsEditingDesc(true)}>
+          <p
+            className="description-text"
+            onClick={() => setIsEditingDesc(true)}
+          >
             {description || "Добавить описание..."}
           </p>
         )}
-        {description && <Button onClick={() => setDescription("")}>Удалить</Button>}
+        {description && (
+          <Button onClick={() => setDescription("")}>Удалить</Button>
+        )}
       </div>
 
       <div className="comments">
@@ -191,5 +206,3 @@ const Popup: React.FC<PopupProps> = ({
     </Modal>
   );
 };
-
-export default Popup;

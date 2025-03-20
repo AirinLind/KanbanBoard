@@ -1,14 +1,14 @@
-export interface Column {
+export type Column = {
   id: number;
   title: string;
 }
 
-export interface Comment {
+export type Comment = {
   text: string;
   author: string;
 }
 
-export interface Todo {
+export type Todo = {
   id: number;
   title: string;
   completed: boolean;
@@ -18,12 +18,12 @@ export interface Todo {
   description?: string;
 }
 
-export interface NamePopupProps {
+export type NamePopupProps = {
   setUserName: (name: string) => void;
   closePopup: () => void;
 }
 
-export interface PopupProps {
+export type PopupProps = {
   todo: Todo;
   closePopup: () => void;
   addComment: (todoId: number, comment: Comment) => void;
@@ -40,7 +40,7 @@ export interface PopupProps {
   columns: Column[];
 }
 
-export interface InputProps {
+export type InputProps = {
   type?: string;
   value?: string;
   placeholder?: string;
@@ -51,12 +51,12 @@ export interface InputProps {
   autoFocus?: boolean;
 }
 
-export interface ModalProps {
+export type ModalProps = {
   children: React.ReactNode;
   onClose: () => void;
 }
 
-export interface ButtonProps {
+export type ButtonProps = {
   onClick: () => void;
   children: React.ReactNode;
   className?: string;

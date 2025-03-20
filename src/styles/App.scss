@@ -6,7 +6,7 @@ $background-color: #f4f4f4;
 $border-radius: 6px;
 $box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 
-@mixin flex-center{
+@mixin flex-center {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -132,7 +132,6 @@ body {
   max-width: 1200px;
 }
 
-
 .add-column-btn {
   background-color: $primary-color;
   color: white;
@@ -172,7 +171,9 @@ body {
   border-radius: 8px;
   cursor: pointer;
   text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   &:hover {
     transform: scale(1.05);
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
@@ -192,8 +193,6 @@ body {
   color: gray;
   margin-top: 5px;
 }
-
-
 
 li {
   list-style-type: none;

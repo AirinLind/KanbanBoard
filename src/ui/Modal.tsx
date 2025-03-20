@@ -1,10 +1,10 @@
-import React from "react";
+import { FC } from "react";
 import ReactDOM from "react-dom";
 import "../styles/App.scss";
 import { ModalProps } from "../types";
 import { useEscapeKey } from "../hooks/useHandleEscapePress";
 
-const Modal: React.FC<ModalProps> = ({ children, onClose }) => {
+export const Modal: FC<ModalProps> = ({ children, onClose }) => {
   useEscapeKey(onClose);
 
   return ReactDOM.createPortal(
@@ -19,5 +19,3 @@ const Modal: React.FC<ModalProps> = ({ children, onClose }) => {
     document.getElementById("modal-root") as HTMLElement
   );
 };
-
-export default Modal;

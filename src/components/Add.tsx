@@ -1,11 +1,11 @@
-import Input from "../ui/Input";
+import { Input } from "../ui/Input";
 import "../styles/App.scss";
 
-interface AddProps {
+type AddProps = {
   addTodo: (title: string) => void;
-}
+};
 
-function Add({ addTodo }: AddProps) {
+export function Add({ addTodo }: AddProps) {
   function handleKeyUp(event: React.KeyboardEvent<HTMLInputElement>) {
     const target = event.target as HTMLInputElement;
     if (event.key === "Enter" && target.value.trim() !== "") {
@@ -20,5 +20,3 @@ function Add({ addTodo }: AddProps) {
     </div>
   );
 }
-
-export default Add;

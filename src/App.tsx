@@ -1,4 +1,4 @@
-import Dask from "./components/Dask";
+import { Dask } from "./components/Dask";
 function App() {
   return (
     <div className="App">

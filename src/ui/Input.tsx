@@ -1,8 +1,8 @@
-import React from "react";
+import { FC } from "react";
 import "../styles/App.scss";
 import { InputProps } from "../types";
 
-const Input: React.FC<InputProps> = ({
+export const Input: FC<InputProps> = ({
   type = "text",
   value,
   placeholder,
@@ -26,5 +26,3 @@ const Input: React.FC<InputProps> = ({
     />
   );
 };
-
-export default Input;
