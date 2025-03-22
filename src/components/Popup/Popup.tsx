@@ -1,10 +1,9 @@
 import { useEffect, useState, useMemo, FC } from "react";
-import { PopupProps, Comment } from "../types";
-import "../styles/App.scss";
-import { Modal } from "../ui/Modal";
-import { Input } from "../ui/Input";
-import { Button } from "../ui/Button";
-import { useEnterKey } from "../hooks/useHandleEnterPress";
+import { PopupProps } from "./Popup.types";
+import { Comment } from "../Dask/Dask.types";
+import "../../styles/App.scss";
+import { Modal, Input, Button } from "../../ui";
+import { useEnterKey } from "../../hooks/useHandleEnterPress";
 
 export const Popup: FC<PopupProps> = ({
   todo,

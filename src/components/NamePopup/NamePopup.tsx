@@ -1,14 +1,8 @@
 import { useState } from "react";
-import { Modal } from "../ui/Modal";
-import { Input } from "../ui/Input";
-import { Button } from "../ui/Button";
+import { Modal, Input, Button } from "../../ui";
+import { NamePopupProps } from "./NamePopup.types";
 
-type NamePopupProps = {
-  setUserName: (name: string) => void;
-  closePopup: () => void;
-};
-
-export function NamePopup({ setUserName, closePopup }: NamePopupProps) {
+export const NamePopup = ({ setUserName, closePopup }: NamePopupProps) => {
   const [name, setName] = useState("");
 
   function handleSave() {
@@ -29,4 +23,4 @@ export function NamePopup({ setUserName, closePopup }: NamePopupProps) {
       <Button onClick={handleSave}>Сохранить</Button>
     </Modal>
   );
-}
+};

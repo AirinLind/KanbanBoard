@@ -1,11 +1,8 @@
-import { Input } from "../ui/Input";
-import "../styles/App.scss";
+import { Input } from "../../ui";
+import "../../styles/App.scss";
+import { AddProps } from "./Add.types";
 
-type AddProps = {
-  addTodo: (title: string) => void;
-};
-
-export function Add({ addTodo }: AddProps) {
+export const Add = ({ addTodo }: AddProps) => {
   function handleKeyUp(event: React.KeyboardEvent<HTMLInputElement>) {
     const target = event.target as HTMLInputElement;
     if (event.key === "Enter" && target.value.trim() !== "") {
@@ -19,4 +16,4 @@ export function Add({ addTodo }: AddProps) {
       <Input onKeyUp={handleKeyUp} placeholder="Добавить задачу..." />
     </div>
   );
-}
+};

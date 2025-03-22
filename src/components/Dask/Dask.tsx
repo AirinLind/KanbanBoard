@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { Column } from "./Column";
-import { Popup } from "./Popup";
-import { NamePopup } from "./NamePopup";
-import { Column as ColumnType, Todo, Comment } from "../types";
-import "../styles/App.scss";
+import { Column } from "../Column/Column";
+import { Popup } from "../Popup/Popup";
+import { NamePopup } from "../NamePopup/NamePopup";
+import { ColumnType } from "../Column/Column.types";
+import { Todo } from "../Card/Card.types";
+import { Comment } from "./Dask.types";
+import "../../styles/App.scss";
 
 export function Dask() {
   const defaultColumns: ColumnType[] = [
