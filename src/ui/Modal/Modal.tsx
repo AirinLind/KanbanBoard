@@ -1,11 +1,11 @@
 import { FC } from "react";
 import styles from "./Modal.module.scss";
 import { ModalProps } from "./Modal.types";
-import { useEscapeKey } from "../../hooks/useHandleEscapePress";
+import { useKeyPress } from "../../hooks/useKeyPress";
 import { Portal } from "../../hok/Portal";
 
 export const Modal: FC<ModalProps> = ({ children, onClose }) => {
-  useEscapeKey(onClose);
+  useKeyPress("Escape", onClose);
 
   return (
     <Portal>

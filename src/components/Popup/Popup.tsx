@@ -3,7 +3,7 @@ import { PopupProps } from "./Popup.types";
 import { Comment } from "../Dask/Dask.types";
 import styles from "./Popup.module.scss";
 import { Modal, Input, Button } from "../../ui";
-import { useEnterKey } from "../../hooks/useHandleEnterPress";
+import { useKeyPress } from "../../hooks/useKeyPress";
 
 export const Popup: FC<PopupProps> = ({
   todo,
@@ -24,7 +24,7 @@ export const Popup: FC<PopupProps> = ({
   const [description, setDescription] = useState(todo.description || "");
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(
-    null,
+    null
   );
   const [editedCommentText, setEditedCommentText] = useState("");
 
@@ -32,7 +32,7 @@ export const Popup: FC<PopupProps> = ({
     () =>
       columns.find((col) => col.id === todo.columnId)?.title ||
       "Неизвестная колонка",
-    [columns, todo.columnId],
+    [columns, todo.columnId]
   );
 
   useEffect(() => {
@@ -64,8 +64,8 @@ export const Popup: FC<PopupProps> = ({
         prev.map((comment, index) =>
           index === editingCommentIndex
             ? { ...comment, text: editedCommentText }
-            : comment,
-        ),
+            : comment
+        )
       );
       setEditingCommentIndex(null);
       setEditedCommentText("");
@@ -81,7 +81,7 @@ export const Popup: FC<PopupProps> = ({
     }
   };
 
-  useEnterKey(() => {
+  useKeyPress("Enter", () => {
     if (isEditing) handleSaveTitle();
     if (isEditingDesc) handleSaveDescription();
     if (editingCommentIndex !== null) handleSaveComment();

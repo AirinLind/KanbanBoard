@@ -6,6 +6,7 @@ import { Input } from "../../ui";
 import { IconButton } from "../../ui/";
 import { Modal } from "../../ui/";
 import styles from "./Column.module.scss";
+import { useKeyPress } from "../../hooks/useKeyPress";
 
 export const Column = ({
   column,
@@ -30,6 +31,12 @@ export const Column = ({
   function handleEditClick() {
     setIsModalOpen(true);
   }
+
+  useKeyPress("Enter", () => {
+    if (isModalOpen) {
+      saveTitle();
+    }
+  });
 
   return (
     <div className={styles.column}>
