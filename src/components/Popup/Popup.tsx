@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, FC } from "react";
 import { PopupProps } from "./Popup.types";
 import { Comment } from "../Dask/Dask.types";
-import "../../styles/App.scss";
+import styles from "./Popup.module.scss";
 import { Modal, Input, Button } from "../../ui";
 import { useEnterKey } from "../../hooks/useHandleEnterPress";
 
@@ -24,7 +24,7 @@ export const Popup: FC<PopupProps> = ({
   const [description, setDescription] = useState(todo.description || "");
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(
-    null
+    null,
   );
   const [editedCommentText, setEditedCommentText] = useState("");
 
@@ -32,7 +32,7 @@ export const Popup: FC<PopupProps> = ({
     () =>
       columns.find((col) => col.id === todo.columnId)?.title ||
       "Неизвестная колонка",
-    [columns, todo.columnId]
+    [columns, todo.columnId],
   );
 
   useEffect(() => {
@@ -64,8 +64,8 @@ export const Popup: FC<PopupProps> = ({
         prev.map((comment, index) =>
           index === editingCommentIndex
             ? { ...comment, text: editedCommentText }
-            : comment
-        )
+            : comment,
+        ),
       );
       setEditingCommentIndex(null);
       setEditedCommentText("");
@@ -97,7 +97,7 @@ export const Popup: FC<PopupProps> = ({
 
   return (
     <Modal onClose={closePopup}>
-      <div className="popup-header">
+      <div className={styles.popupHeader}>
         {isEditing ? (
           <Input
             value={newTitle}
@@ -106,12 +106,12 @@ export const Popup: FC<PopupProps> = ({
             autoFocus
           />
         ) : (
-          <h2 className="popup-title" onClick={() => setIsEditing(true)}>
+          <h2 className={styles.popupTitle} onClick={() => setIsEditing(true)}>
             {newTitle}
           </h2>
         )}
         <Button
-          className="delete-btn"
+          className={styles.deleteBtn}
           onClick={() => {
             deleteTodo(todo.id);
             closePopup();
@@ -119,7 +119,7 @@ export const Popup: FC<PopupProps> = ({
         >
           Удалить
         </Button>
-        <Button className="close-btn" onClick={closePopup}>
+        <Button className={styles.closeBtn} onClick={closePopup}>
           &times;
         </Button>
       </div>
@@ -141,13 +141,10 @@ export const Popup: FC<PopupProps> = ({
             onChange={(e) => setDescription(e.target.value)}
             onBlur={handleSaveDescription}
             autoFocus
-            className="description-input"
+            className="descriptionInput"
           />
         ) : (
-          <p
-            className="description-text"
-            onClick={() => setIsEditingDesc(true)}
-          >
+          <p className="descriptionText" onClick={() => setIsEditingDesc(true)}>
             {description || "Добавить описание..."}
           </p>
         )}
@@ -156,7 +153,7 @@ export const Popup: FC<PopupProps> = ({
         )}
       </div>
 
-      <div className="comments">
+      <div className={styles.comments}>
         <h3>Комментарии</h3>
         <ul>
           {comments.map((comment, index) => (

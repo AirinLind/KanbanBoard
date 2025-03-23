@@ -1,11 +1,11 @@
 import { CardProps } from "./Card.types";
-import "../../styles/App.scss";
+import styles from "./Card.module.scss";
 
 export const Card = ({ todo, setSelectedTodo }: CardProps) => {
   return (
-    <div className="todo_card" onClick={() => setSelectedTodo(todo)}>
+    <div className={styles.todoCard} onClick={() => setSelectedTodo(todo)}>
       <h2>{todo.title}</h2>
-      <p className="comment-count">💬 {todo.comments.length}</p>
+      <p className={styles.commentCount}>💬 {todo.comments.length}</p>
     </div>
   );
 };

@@ -5,7 +5,7 @@ import { NamePopup } from "../NamePopup/NamePopup";
 import { ColumnType } from "../Column/Column.types";
 import { Todo } from "../Card/Card.types";
 import { Comment } from "./Dask.types";
-import "../../styles/App.scss";
+import styles from "./Dask.module.scss";
 
 export function Dask() {
   const defaultColumns: ColumnType[] = [
@@ -16,17 +16,17 @@ export function Dask() {
   ];
 
   const localColumns: ColumnType[] = JSON.parse(
-    localStorage.getItem("columns") || "[]"
+    localStorage.getItem("columns") || "[]",
   );
   const [columns, setColumns] = useState<ColumnType[]>(
-    localColumns.length > 0 ? localColumns : defaultColumns
+    localColumns.length > 0 ? localColumns : defaultColumns,
   );
   const [todos, setTodos] = useState<Todo[]>(
-    JSON.parse(localStorage.getItem("todos") || "[]")
+    JSON.parse(localStorage.getItem("todos") || "[]"),
   );
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [userName, setUserName] = useState<string>(
-    localStorage.getItem("userName") || ""
+    localStorage.getItem("userName") || "",
   );
   const [showNamePopup, setShowNamePopup] = useState<boolean>(!userName);
 
@@ -55,15 +55,15 @@ export function Dask() {
       todos.map((todo) =>
         todo.id === todoId
           ? { ...todo, comments: [...todo.comments, comment] }
-          : todo
-      )
+          : todo,
+      ),
     );
   }
 
   function updateComment(
     todoId: number,
     commentIndex: number,
-    newComment: string
+    newComment: string,
   ) {
     setTodos((todos) =>
       todos.map((todo) =>
@@ -73,11 +73,11 @@ export function Dask() {
               comments: todo.comments.map((comment, index) =>
                 index === commentIndex
                   ? { ...comment, text: newComment }
-                  : comment
+                  : comment,
               ),
             }
-          : todo
-      )
+          : todo,
+      ),
     );
   }
 
@@ -88,11 +88,11 @@ export function Dask() {
           ? {
               ...todo,
               comments: todo.comments.filter(
-                (_, index) => index !== commentIndex
+                (_, index) => index !== commentIndex,
               ),
             }
-          : todo
-      )
+          : todo,
+      ),
     );
   }
 
@@ -103,29 +103,29 @@ export function Dask() {
 
   function updateColumnTitle(id: number, newTitle: string) {
     setColumns(
-      columns.map((col) => (col.id === id ? { ...col, title: newTitle } : col))
+      columns.map((col) => (col.id === id ? { ...col, title: newTitle } : col)),
     );
   }
 
   function updateTodoTitle(todoId: number, newTitle: string) {
     setTodos(
       todos.map((todo) =>
-        todo.id === todoId ? { ...todo, title: newTitle } : todo
-      )
+        todo.id === todoId ? { ...todo, title: newTitle } : todo,
+      ),
     );
   }
 
   function updateTodoDescription(todoId: number, newDescription: string) {
     setTodos(
       todos.map((todo) =>
-        todo.id === todoId ? { ...todo, description: newDescription } : todo
-      )
+        todo.id === todoId ? { ...todo, description: newDescription } : todo,
+      ),
     );
   }
 
   return (
-    <div className="board">
-      <div className="columns">
+    <div className={styles.board}>
+      <div className={styles.columns}>
         {columns.map((col) => (
           <Column
             key={col.id}

@@ -12,7 +12,7 @@ export type PopupProps = {
   updateComment: (
     todoId: number,
     commentIndex: number,
-    newText: string
+    newText: string,
   ) => void;
   deleteComment: (todoId: number, commentIndex: number) => void;
   authorName: string;

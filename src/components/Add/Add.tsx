@@ -1,5 +1,4 @@
 import { Input } from "../../ui";
-import "../../styles/App.scss";
 import { AddProps } from "./Add.types";
 
 export const Add = ({ addTodo }: AddProps) => {

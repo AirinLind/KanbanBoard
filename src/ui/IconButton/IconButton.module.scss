@@ -1,0 +1,14 @@
+.iconButton {
+  display: block;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  color: white;
+  background-color: #0079bf;
+  padding: 8px 12px;
+  transition: color 0.3s ease;
+  cursor: pointer;
+  &:hover {
+    background-color: #005a8c;
+  }
+}

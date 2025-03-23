@@ -1,0 +1,27 @@
+.todoCard {
+  padding: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  }
+  &.pending {
+    background: coral;
+    color: white;
+  }
+  &.completed {
+    background: lightgreen;
+    color: black;
+  }
+}
+
+.commentCount {
+  font-size: 14px;
+  color: gray;
+  margin-top: 5px;
+}

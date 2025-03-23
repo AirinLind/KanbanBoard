@@ -1,0 +1,25 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 2px;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+.board {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.columns {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+}

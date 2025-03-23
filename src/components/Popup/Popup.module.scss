@@ -1,0 +1,66 @@
+.popupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.closeBtn,
+.deleteBtn {
+  border: none;
+  background: none;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  color: #333;
+  &:hover {
+    color: red;
+  }
+}
+
+.deleteBtn {
+  color: red;
+  &:hover {
+    color: darkred;
+  }
+}
+
+.comments {
+  margin-top: 20px;
+  input {
+    width: calc(100% - 20px);
+    padding: 8px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    &:focus {
+      border-color: #0079bf;
+    }
+  }
+  button {
+    display: block;
+    margin-top: 12px;
+    padding: 8px 12px;
+    background-color: #0079bf;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    &:hover {
+      background-color: #005a8c;
+    }
+  }
+}
+
+li {
+  list-style-type: none;
+}

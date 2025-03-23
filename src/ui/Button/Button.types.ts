@@ -1,5 +1,6 @@
+import { PropsWithChildren } from "react";
+
 export type ButtonProps = {
   onClick: () => void;
-  children: React.ReactNode;
   className?: string;
-};
+} & PropsWithChildren;

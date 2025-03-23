@@ -1,6 +1,6 @@
 import { FC } from "react";
-import "../../styles/App.scss";
 import { InputProps } from "./Input.types";
+import styles from "./Input.module.scss";
 
 export const Input: FC<InputProps> = ({
   type = "text",
@@ -22,7 +22,7 @@ export const Input: FC<InputProps> = ({
       onKeyDown={onKeyDown}
       onBlur={onBlur}
       autoFocus={autoFocus}
-      className="custom-input"
+      className={styles["custom-input"]}
     />
   );
 };
