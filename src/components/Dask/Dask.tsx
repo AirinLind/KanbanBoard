@@ -1,44 +1,39 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Column } from "../Column/Column";
 import { Popup } from "../Popup/Popup";
 import { NamePopup } from "../NamePopup/NamePopup";
-import { ColumnType } from "../Column/Column.types";
 import { Todo } from "../Card/Card.types";
 import { Comment } from "./Dask.types";
+import { updateColumnTitle } from "../../store/actions/columnActions";
+import {
+  addTodo,
+  updateTodoTitle,
+  deleteTodo,
+  addComment,
+  updateComment,
+  deleteComment,
+  updateTodoDescription,
+} from "../../store/actions/todoActions";
+import { setUserName } from "../../store/actions/userActions";
 import styles from "./Dask.module.scss";
 
 export function Dask() {
-  const defaultColumns: ColumnType[] = [
-    { id: 1, title: "Todo" },
-    { id: 2, title: "In Progress" },
-    { id: 3, title: "Testing" },
-    { id: 4, title: "Done" },
-  ];
+  const columns = useSelector((state: any) => state.columns.columns);
+  const todos = useSelector((state: any) => state.todos.todos);
+  const userName = useSelector((state: any) => state.user.userName);
+  const dispatch = useDispatch();
 
-  const localColumns: ColumnType[] = JSON.parse(
-    localStorage.getItem("columns") || "[]",
-  );
-  const [columns, setColumns] = useState<ColumnType[]>(
-    localColumns.length > 0 ? localColumns : defaultColumns,
-  );
-  const [todos, setTodos] = useState<Todo[]>(
-    JSON.parse(localStorage.getItem("todos") || "[]"),
-  );
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
-  const [userName, setUserName] = useState<string>(
-    localStorage.getItem("userName") || "",
-  );
   const [showNamePopup, setShowNamePopup] = useState<boolean>(!userName);
 
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-    localStorage.setItem("columns", JSON.stringify(columns));
     if (userName) {
       localStorage.setItem("userName", userName);
     }
-  }, [todos, columns, userName]);
+  }, [userName]);
 
-  function addTodo(title: string, columnId: number) {
+  function addTodoHandler(title: string, columnId: number) {
     const newTodo: Todo = {
       id: Date.now(),
       title,
@@ -47,93 +42,58 @@ export function Dask() {
       comments: [],
       author: userName,
     };
-    setTodos([...todos, newTodo]);
+    dispatch(addTodo(newTodo));
   }
 
-  function addComment(todoId: number, comment: Comment) {
-    setTodos((todos) =>
-      todos.map((todo) =>
-        todo.id === todoId
-          ? { ...todo, comments: [...todo.comments, comment] }
-          : todo,
-      ),
-    );
+  function addCommentHandler(todoId: number, comment: Comment) {
+    dispatch(addComment(todoId, comment));
   }
 
-  function updateComment(
+  function updateCommentHandler(
     todoId: number,
     commentIndex: number,
     newComment: string,
   ) {
-    setTodos((todos) =>
-      todos.map((todo) =>
-        todo.id === todoId
-          ? {
-              ...todo,
-              comments: todo.comments.map((comment, index) =>
-                index === commentIndex
-                  ? { ...comment, text: newComment }
-                  : comment,
-              ),
-            }
-          : todo,
-      ),
-    );
+    dispatch(updateComment(todoId, commentIndex, newComment));
   }
 
-  function deleteComment(todoId: number, commentIndex: number) {
-    setTodos((todos) =>
-      todos.map((todo) =>
-        todo.id === todoId
-          ? {
-              ...todo,
-              comments: todo.comments.filter(
-                (_, index) => index !== commentIndex,
-              ),
-            }
-          : todo,
-      ),
-    );
+  function deleteCommentHandler(todoId: number, commentIndex: number) {
+    dispatch(deleteComment(todoId, commentIndex));
   }
 
-  function deleteTodo(todoId: number) {
-    setTodos(todos.filter((todo) => todo.id !== todoId));
+  function deleteTodoHandler(todoId: number) {
+    dispatch(deleteTodo(todoId));
     setSelectedTodo(null);
   }
 
-  function updateColumnTitle(id: number, newTitle: string) {
-    setColumns(
-      columns.map((col) => (col.id === id ? { ...col, title: newTitle } : col)),
-    );
+  function updateColumnTitleHandler(id: number, newTitle: string) {
+    dispatch(updateColumnTitle(id, newTitle));
   }
 
-  function updateTodoTitle(todoId: number, newTitle: string) {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === todoId ? { ...todo, title: newTitle } : todo,
-      ),
-    );
+  function updateTodoTitleHandler(todoId: number, newTitle: string) {
+    dispatch(updateTodoTitle(todoId, newTitle));
   }
 
-  function updateTodoDescription(todoId: number, newDescription: string) {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === todoId ? { ...todo, description: newDescription } : todo,
-      ),
-    );
+  function updateTodoDescriptionHandler(
+    todoId: number,
+    newDescription: string,
+  ) {
+    dispatch(updateTodoDescription(todoId, newDescription));
   }
+
+  const closeNamePopup = () => setShowNamePopup(false);
 
   return (
     <div className={styles.board}>
       <div className={styles.columns}>
-        {columns.map((col) => (
+        {columns.map((col: { id: number; title: string }) => (
           <Column
             key={col.id}
             column={col}
-            todos={todos.filter((todo) => todo.columnId === col.id)}
-            addTodo={addTodo}
-            updateColumnTitle={updateColumnTitle}
-            updateTodoTitle={updateTodoTitle}
+            todos={todos.filter((todo: Todo) => todo.columnId === col.id)}
+            addTodo={addTodoHandler}
+            updateColumnTitle={updateColumnTitleHandler}
+            updateTodoTitle={updateTodoTitleHandler}
             setSelectedTodo={setSelectedTodo}
           />
         ))}
@@ -142,20 +102,20 @@ export function Dask() {
         <Popup
           todo={selectedTodo}
           closePopup={() => setSelectedTodo(null)}
-          addComment={addComment}
-          updateTodoTitle={updateTodoTitle}
-          updateTodoDescription={updateTodoDescription}
-          deleteTodo={deleteTodo}
+          addComment={addCommentHandler}
+          updateTodoTitle={updateTodoTitleHandler}
+          updateTodoDescription={updateTodoDescriptionHandler}
+          deleteTodo={deleteTodoHandler}
           authorName={userName}
           columns={columns}
-          updateComment={updateComment}
-          deleteComment={deleteComment}
+          updateComment={updateCommentHandler}
+          deleteComment={deleteCommentHandler}
         />
       )}
       {showNamePopup && (
         <NamePopup
-          setUserName={setUserName}
-          closePopup={() => setShowNamePopup(false)}
+          setUserName={(name: string) => dispatch(setUserName(name))} // Dispatch setUserName action
+          closePopup={closeNamePopup}
         />
       )}
     </div>

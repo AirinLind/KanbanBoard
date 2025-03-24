@@ -1,3 +1,14 @@
-.root {
-  background: var(--primary-color);
+.button {
+  flex-shrink: 0;
+  padding: 12px 18px;
+  font-size: 16px;
+  background-color: #0079bf;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease;
 }

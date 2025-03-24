@@ -24,7 +24,7 @@ export const Popup: FC<PopupProps> = ({
   const [description, setDescription] = useState(todo.description || "");
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(
-    null
+    null,
   );
   const [editedCommentText, setEditedCommentText] = useState("");
 
@@ -32,7 +32,7 @@ export const Popup: FC<PopupProps> = ({
     () =>
       columns.find((col) => col.id === todo.columnId)?.title ||
       "Неизвестная колонка",
-    [columns, todo.columnId]
+    [columns, todo.columnId],
   );
 
   useEffect(() => {
@@ -64,8 +64,8 @@ export const Popup: FC<PopupProps> = ({
         prev.map((comment, index) =>
           index === editingCommentIndex
             ? { ...comment, text: editedCommentText }
-            : comment
-        )
+            : comment,
+        ),
       );
       setEditingCommentIndex(null);
       setEditedCommentText("");
@@ -118,9 +118,6 @@ export const Popup: FC<PopupProps> = ({
           }}
         >
           Удалить
-        </Button>
-        <Button className={styles.closeBtn} onClick={closePopup}>
-          &times;
         </Button>
       </div>
 
