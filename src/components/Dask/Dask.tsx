@@ -4,8 +4,9 @@ import { Column } from "../Column/Column";
 import { Popup } from "../Popup/Popup";
 import { NamePopup } from "../NamePopup/NamePopup";
 import { Todo } from "../Card/Card.types";
+import { ColumnType } from "../Column/Column.types";
 import { Comment } from "./Dask.types";
-import { updateColumnTitle } from "../../store/actions/columnActions";
+import { RootState } from "../../store/store";
 import {
   addTodo,
   updateTodoTitle,
@@ -14,14 +15,15 @@ import {
   updateComment,
   deleteComment,
   updateTodoDescription,
-} from "../../store/actions/todoActions";
-import { setUserName } from "../../store/actions/userActions";
+} from "../../store/ducks/todo";
+import { setUserName } from "../../store/ducks/user";
+import { updateColumnTitle } from "../../store/ducks/column";
 import styles from "./Dask.module.scss";
 
 export function Dask() {
-  const columns = useSelector((state: any) => state.columns.columns);
-  const todos = useSelector((state: any) => state.todos.todos);
-  const userName = useSelector((state: any) => state.user.userName);
+  const columns = useSelector((state: RootState) => state.columns.columns);
+  const todos = useSelector((state: RootState) => state.todos.todos);
+  const userName = useSelector((state: RootState) => state.user.userName);
   const dispatch = useDispatch();
 
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
@@ -46,7 +48,7 @@ export function Dask() {
   }
 
   function addCommentHandler(todoId: number, comment: Comment) {
-    dispatch(addComment(todoId, comment));
+    dispatch(addComment({ todoId, comment }));
   }
 
   function updateCommentHandler(
@@ -54,11 +56,11 @@ export function Dask() {
     commentIndex: number,
     newComment: string,
   ) {
-    dispatch(updateComment(todoId, commentIndex, newComment));
+    dispatch(updateComment({ todoId, commentIndex, newText: newComment }));
   }
 
   function deleteCommentHandler(todoId: number, commentIndex: number) {
-    dispatch(deleteComment(todoId, commentIndex));
+    dispatch(deleteComment({ todoId, commentIndex }));
   }
 
   function deleteTodoHandler(todoId: number) {
@@ -67,18 +69,18 @@ export function Dask() {
   }
 
   function updateColumnTitleHandler(id: number, newTitle: string) {
-    dispatch(updateColumnTitle(id, newTitle));
+    dispatch(updateColumnTitle({ id, newTitle }));
   }
 
   function updateTodoTitleHandler(todoId: number, newTitle: string) {
-    dispatch(updateTodoTitle(todoId, newTitle));
+    dispatch(updateTodoTitle({ id: todoId, newTitle }));
   }
 
   function updateTodoDescriptionHandler(
     todoId: number,
     newDescription: string,
   ) {
-    dispatch(updateTodoDescription(todoId, newDescription));
+    dispatch(updateTodoDescription({ id: todoId, newDescription }));
   }
 
   const closeNamePopup = () => setShowNamePopup(false);
@@ -86,7 +88,7 @@ export function Dask() {
   return (
     <div className={styles.board}>
       <div className={styles.columns}>
-        {columns.map((col: { id: number; title: string }) => (
+        {columns.map((col: ColumnType) => (
           <Column
             key={col.id}
             column={col}
@@ -98,6 +100,7 @@ export function Dask() {
           />
         ))}
       </div>
+
       {selectedTodo && (
         <Popup
           todo={selectedTodo}
@@ -112,9 +115,10 @@ export function Dask() {
           deleteComment={deleteCommentHandler}
         />
       )}
+
       {showNamePopup && (
         <NamePopup
-          setUserName={(name: string) => dispatch(setUserName(name))} // Dispatch setUserName action
+          setUserName={(name: string) => dispatch(setUserName(name))}
           closePopup={closeNamePopup}
         />
       )}

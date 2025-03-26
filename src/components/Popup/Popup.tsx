@@ -37,7 +37,8 @@ export const Popup: FC<PopupProps> = ({
 
   useEffect(() => {
     setComments([...todo.comments]);
-  }, [todo.comments]);
+    setDescription(todo.description || "");
+  }, [todo.comments, todo.description]);
 
   const handleSaveTitle = () => {
     if (newTitle.trim()) {
@@ -55,6 +56,11 @@ export const Popup: FC<PopupProps> = ({
       setDescription(todo.description || "");
     }
     setIsEditingDesc(false);
+  };
+
+  const handleDeleteDescription = () => {
+    setDescription("");
+    updateTodoDescription(todo.id, "");
   };
 
   const handleSaveComment = () => {
@@ -133,12 +139,11 @@ export const Popup: FC<PopupProps> = ({
       <div className="description">
         <h3>Описание</h3>
         {isEditingDesc ? (
-          <textarea
+          <Input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             onBlur={handleSaveDescription}
             autoFocus
-            className="descriptionInput"
           />
         ) : (
           <p className="descriptionText" onClick={() => setIsEditingDesc(true)}>
@@ -146,7 +151,7 @@ export const Popup: FC<PopupProps> = ({
           </p>
         )}
         {description && (
-          <Button onClick={() => setDescription("")}>Удалить</Button>
+          <Button onClick={handleDeleteDescription}>Удалить</Button>
         )}
       </div>
 

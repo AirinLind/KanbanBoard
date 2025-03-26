@@ -1,17 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setUserName } from "../../store/actions/userActions";
+import { setUserName } from "../../store/ducks/user/user";
 import { Modal, Input, Button } from "../../ui";
 import { NamePopupProps } from "./NamePopup.types";
 import styles from "./NamePopup.module.scss";
 
 export const NamePopup = ({ closePopup }: NamePopupProps) => {
-  const [name, setName] = useState("");
   const dispatch = useDispatch();
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    const storedName = localStorage.getItem("userName");
+    if (storedName) {
+      setName(storedName);
+    }
+  }, []);
 
   function handleSave() {
-    if (name.trim()) {
-      dispatch(setUserName(name.trim()));
+    const trimmedName = name.trim();
+    if (trimmedName) {
+      dispatch(setUserName(trimmedName));
+      localStorage.setItem("userName", trimmedName);
       closePopup();
     }
   }

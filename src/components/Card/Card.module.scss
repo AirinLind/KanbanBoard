@@ -6,18 +6,38 @@
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 200px;
+  min-width: 150px;
+  word-wrap: break-word;
+  overflow: hidden;
+
   &:hover {
     transform: scale(1.05);
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
   }
+
   &.pending {
     background: coral;
     color: white;
   }
+
   &.completed {
     background: lightgreen;
     color: black;
   }
+}
+
+.todoCard h2 {
+  font-size: 20px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
 .commentCount {
