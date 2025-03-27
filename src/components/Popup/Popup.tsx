@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo, FC } from "react";
+import { useForm } from "react-hook-form";
 import { PopupProps } from "./Popup.types";
 import { Comment } from "../Dask/Dask.types";
 import styles from "./Popup.module.scss";
@@ -17,11 +18,23 @@ export const Popup: FC<PopupProps> = ({
   authorName,
   columns,
 }) => {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      title: todo.title,
+      description: todo.description || "",
+      newComment: "",
+      comments: todo.comments,
+    },
+  });
+
   const [isEditing, setIsEditing] = useState(false);
-  const [newTitle, setNewTitle] = useState(todo.title);
-  const [newComment, setNewComment] = useState("");
-  const [comments, setComments] = useState<Comment[]>(todo.comments);
-  const [description, setDescription] = useState(todo.description || "");
   const [isEditingDesc, setIsEditingDesc] = useState(false);
   const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(
     null,
@@ -36,67 +49,65 @@ export const Popup: FC<PopupProps> = ({
   );
 
   useEffect(() => {
-    setComments([...todo.comments]);
-    setDescription(todo.description || "");
-  }, [todo.comments, todo.description]);
+    reset({
+      title: todo.title,
+      description: todo.description || "",
+      newComment: "",
+      comments: todo.comments,
+    });
+  }, [todo, reset]);
 
-  const handleSaveTitle = () => {
-    if (newTitle.trim()) {
-      updateTodoTitle(todo.id, newTitle);
+  const handleSaveTitle = handleSubmit((data) => {
+    if (data.title.trim()) {
+      updateTodoTitle(todo.id, data.title);
     } else {
-      setNewTitle(todo.title);
+      setValue("title", todo.title);
     }
     setIsEditing(false);
-  };
+  });
 
-  const handleSaveDescription = () => {
-    if (description.trim()) {
-      updateTodoDescription(todo.id, description);
-    } else {
-      setDescription(todo.description || "");
-    }
+  const handleSaveDescription = handleSubmit((data) => {
+    updateTodoDescription(todo.id, data.description);
     setIsEditingDesc(false);
-  };
+  });
 
-  const handleDeleteDescription = () => {
-    setDescription("");
-    updateTodoDescription(todo.id, "");
-  };
+  const handleAddComment = handleSubmit((data) => {
+    if (data.newComment.trim()) {
+      const newComment: Comment = { text: data.newComment, author: authorName };
+      const updatedComments = [...watch("comments"), newComment];
+
+      setValue("comments", updatedComments);
+      addComment(todo.id, newComment);
+      setValue("newComment", "");
+    }
+  });
 
   const handleSaveComment = () => {
     if (editedCommentText.trim() && editingCommentIndex !== null) {
-      updateComment(todo.id, editingCommentIndex, editedCommentText);
-      setComments((prev) =>
-        prev.map((comment, index) =>
-          index === editingCommentIndex
-            ? { ...comment, text: editedCommentText }
-            : comment,
-        ),
+      const updatedComments = watch("comments").map((comment, index) =>
+        index === editingCommentIndex
+          ? { ...comment, text: editedCommentText }
+          : comment,
       );
+
+      setValue("comments", updatedComments);
+      updateComment(todo.id, editingCommentIndex, editedCommentText);
       setEditingCommentIndex(null);
       setEditedCommentText("");
     }
   };
 
-  const handleAddComment = () => {
-    if (newComment.trim()) {
-      const comment: Comment = { text: newComment, author: authorName };
-      addComment(todo.id, comment);
-      setComments((prev) => [...prev, comment]);
-      setNewComment("");
-    }
+  const handleDeleteComment = (index: number) => {
+    const updatedComments = watch("comments").filter((_, i) => i !== index);
+    setValue("comments", updatedComments);
+    deleteComment(todo.id, index);
   };
 
   useKeyPress("Enter", () => {
     if (isEditing) handleSaveTitle();
     if (isEditingDesc) handleSaveDescription();
     if (editingCommentIndex !== null) handleSaveComment();
-    if (
-      !isEditing &&
-      !isEditingDesc &&
-      editingCommentIndex === null &&
-      newComment.trim()
-    ) {
+    if (!isEditing && !isEditingDesc && editingCommentIndex === null) {
       handleAddComment();
     }
   });
@@ -105,15 +116,19 @@ export const Popup: FC<PopupProps> = ({
     <Modal onClose={closePopup}>
       <div className={styles.popupHeader}>
         {isEditing ? (
-          <Input
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            onBlur={handleSaveTitle}
-            autoFocus
-          />
+          <form onSubmit={handleSaveTitle}>
+            <Input
+              {...register("title", { required: "Название обязательно" })}
+              autoFocus
+              onBlur={handleSaveTitle}
+            />
+            {errors.title && (
+              <p className={styles.error}>{errors.title.message}</p>
+            )}
+          </form>
         ) : (
           <h2 className={styles.popupTitle} onClick={() => setIsEditing(true)}>
-            {newTitle}
+            {watch("title")}
           </h2>
         )}
         <Button
@@ -139,33 +154,30 @@ export const Popup: FC<PopupProps> = ({
       <div className="description">
         <h3>Описание</h3>
         {isEditingDesc ? (
-          <Input
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            onBlur={handleSaveDescription}
-            autoFocus
-          />
+          <form onSubmit={handleSaveDescription}>
+            <Input
+              {...register("description")}
+              autoFocus
+              onBlur={handleSaveDescription}
+            />
+          </form>
         ) : (
           <p className="descriptionText" onClick={() => setIsEditingDesc(true)}>
-            {description || "Добавить описание..."}
+            {watch("description") || "Добавить описание..."}
           </p>
-        )}
-        {description && (
-          <Button onClick={handleDeleteDescription}>Удалить</Button>
         )}
       </div>
 
       <div className={styles.comments}>
         <h3>Комментарии</h3>
         <ul>
-          {comments.map((comment, index) => (
+          {watch("comments").map((comment, index) => (
             <li key={index}>
               {editingCommentIndex === index ? (
                 <>
                   <Input
                     value={editedCommentText}
                     onChange={(e) => setEditedCommentText(e.target.value)}
-                    onBlur={handleSaveComment}
                     autoFocus
                   />
                   <Button onClick={handleSaveComment}>Сохранить</Button>
@@ -181,12 +193,7 @@ export const Popup: FC<PopupProps> = ({
                   >
                     {comment.text}
                   </span>
-                  <Button
-                    onClick={() => {
-                      deleteComment(todo.id, index);
-                      setComments((prev) => prev.filter((_, i) => i !== index));
-                    }}
-                  >
+                  <Button onClick={() => handleDeleteComment(index)}>
                     Удалить
                   </Button>
                 </>
@@ -194,12 +201,13 @@ export const Popup: FC<PopupProps> = ({
             </li>
           ))}
         </ul>
-        <Input
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Добавить комментарий..."
-        />
-        <Button onClick={handleAddComment}>Добавить</Button>
+        <form onSubmit={handleAddComment}>
+          <Input
+            {...register("newComment")}
+            placeholder="Добавить комментарий..."
+          />
+          <Button type="submit">Добавить</Button>
+        </form>
       </div>
     </Modal>
   );

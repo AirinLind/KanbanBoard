@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Add } from "../Add/Add";
 import { Card } from "../Card/Card";
 import { ColumnProps } from "./Column.types";
 import { Input } from "../../ui";
-import { IconButton } from "../../ui/";
-import { Modal } from "../../ui/";
+import { IconButton } from "../../ui";
+import { Modal } from "../../ui";
 import styles from "./Column.module.scss";
 import { useKeyPress } from "../../hooks/useKeyPress";
 
@@ -16,25 +17,27 @@ export const Column = ({
   updateTodoTitle,
   setSelectedTodo,
 }: ColumnProps) => {
-  const [newTitle, setNewTitle] = useState<string>(column.title);
+  const { register, handleSubmit, setValue } = useForm({
+    defaultValues: {
+      title: column.title,
+    },
+  });
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  function handleTitleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setNewTitle(event.target.value);
-  }
-
-  function saveTitle() {
-    updateColumnTitle(column.id, newTitle);
+  function saveTitle(data: { title: string }) {
+    updateColumnTitle(column.id, data.title);
     setIsModalOpen(false);
   }
 
   function handleEditClick() {
     setIsModalOpen(true);
+    setValue("title", column.title);
   }
 
   useKeyPress("Enter", () => {
     if (isModalOpen) {
-      saveTitle();
+      handleSubmit(saveTitle)();
     }
   });
 
@@ -61,18 +64,20 @@ export const Column = ({
         <Modal onClose={() => setIsModalOpen(false)}>
           <div className={styles.modalContent}>
             <h3>Edit Column Title</h3>
-            <div className={styles.inputContainer}>
+            <form
+              onSubmit={handleSubmit(saveTitle)}
+              className={styles.inputContainer}
+            >
               <Input
                 className="inputField"
                 type="text"
-                value={newTitle}
-                onChange={handleTitleChange}
+                {...register("title", { required: "Название обязательно" })}
                 autoFocus
               />
-              <button className={styles.saveBtn} onClick={saveTitle}>
+              <button type="submit" className={styles.saveBtn}>
                 Save
               </button>
-            </div>
+            </form>
           </div>
         </Modal>
       )}

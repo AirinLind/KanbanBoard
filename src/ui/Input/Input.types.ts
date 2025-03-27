@@ -6,6 +6,6 @@ export type InputProps = {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  onBlur?: () => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   autoFocus?: boolean;
-};
+} & React.InputHTMLAttributes<HTMLInputElement>;

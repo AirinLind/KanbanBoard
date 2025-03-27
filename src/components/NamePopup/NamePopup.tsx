@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
 import { setUserName } from "../../store/ducks/user/user";
 import { Modal, Input, Button } from "../../ui";
 import { NamePopupProps } from "./NamePopup.types";
@@ -7,17 +8,22 @@ import styles from "./NamePopup.module.scss";
 
 export const NamePopup = ({ closePopup }: NamePopupProps) => {
   const dispatch = useDispatch();
-  const [name, setName] = useState("");
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<{ name: string }>();
 
   useEffect(() => {
     const storedName = localStorage.getItem("userName");
     if (storedName) {
-      setName(storedName);
+      setValue("name", storedName);
     }
-  }, []);
+  }, [setValue]);
 
-  function handleSave() {
-    const trimmedName = name.trim();
+  function handleSave(data: { name: string }) {
+    const trimmedName = data.name.trim();
     if (trimmedName) {
       dispatch(setUserName(trimmedName));
       localStorage.setItem("userName", trimmedName);
@@ -28,15 +34,15 @@ export const NamePopup = ({ closePopup }: NamePopupProps) => {
   return (
     <Modal onClose={closePopup}>
       <h2>Введите ваше имя</h2>
-      <div className={styles.container}>
+      <form onSubmit={handleSubmit(handleSave)} className={styles.container}>
         <Input
           className={styles.input}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          {...register("name", { required: "Имя обязательно" })}
           placeholder="Ваше имя..."
         />
-        <Button onClick={handleSave}>Сохранить</Button>
-      </div>
+        {errors.name && <p className={styles.error}>{errors.name.message}</p>}
+        <Button type="submit">Сохранить</Button>
+      </form>
     </Modal>
   );
 };
