@@ -1,10 +1,10 @@
 import { useEffect, useState, useMemo, FC } from "react";
 import { useForm } from "react-hook-form";
 import { PopupProps } from "./Popup.types";
-import { Comment } from "../Dask/Dask.types";
 import styles from "./Popup.module.scss";
 import { Modal, Input, Button } from "../../ui";
 import { useKeyPress } from "../../hooks/useKeyPress";
+import { Comments } from "../Comments/Comments";
 
 export const Popup: FC<PopupProps> = ({
   todo,
@@ -29,17 +29,11 @@ export const Popup: FC<PopupProps> = ({
     defaultValues: {
       title: todo.title,
       description: todo.description || "",
-      newComment: "",
-      comments: todo.comments,
     },
   });
 
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingDesc, setIsEditingDesc] = useState(false);
-  const [editingCommentIndex, setEditingCommentIndex] = useState<number | null>(
-    null,
-  );
-  const [editedCommentText, setEditedCommentText] = useState("");
 
   const columnTitle = useMemo(
     () =>
@@ -49,12 +43,7 @@ export const Popup: FC<PopupProps> = ({
   );
 
   useEffect(() => {
-    reset({
-      title: todo.title,
-      description: todo.description || "",
-      newComment: "",
-      comments: todo.comments,
-    });
+    reset({ title: todo.title, description: todo.description || "" });
   }, [todo, reset]);
 
   const handleSaveTitle = handleSubmit((data) => {
@@ -71,45 +60,9 @@ export const Popup: FC<PopupProps> = ({
     setIsEditingDesc(false);
   });
 
-  const handleAddComment = handleSubmit((data) => {
-    if (data.newComment.trim()) {
-      const newComment: Comment = { text: data.newComment, author: authorName };
-      const updatedComments = [...watch("comments"), newComment];
-
-      setValue("comments", updatedComments);
-      addComment(todo.id, newComment);
-      setValue("newComment", "");
-    }
-  });
-
-  const handleSaveComment = () => {
-    if (editedCommentText.trim() && editingCommentIndex !== null) {
-      const updatedComments = watch("comments").map((comment, index) =>
-        index === editingCommentIndex
-          ? { ...comment, text: editedCommentText }
-          : comment,
-      );
-
-      setValue("comments", updatedComments);
-      updateComment(todo.id, editingCommentIndex, editedCommentText);
-      setEditingCommentIndex(null);
-      setEditedCommentText("");
-    }
-  };
-
-  const handleDeleteComment = (index: number) => {
-    const updatedComments = watch("comments").filter((_, i) => i !== index);
-    setValue("comments", updatedComments);
-    deleteComment(todo.id, index);
-  };
-
   useKeyPress("Enter", () => {
     if (isEditing) handleSaveTitle();
     if (isEditingDesc) handleSaveDescription();
-    if (editingCommentIndex !== null) handleSaveComment();
-    if (!isEditing && !isEditingDesc && editingCommentIndex === null) {
-      handleAddComment();
-    }
   });
 
   return (
@@ -168,47 +121,14 @@ export const Popup: FC<PopupProps> = ({
         )}
       </div>
 
-      <div className={styles.comments}>
-        <h3>Комментарии</h3>
-        <ul>
-          {watch("comments").map((comment, index) => (
-            <li key={index}>
-              {editingCommentIndex === index ? (
-                <>
-                  <Input
-                    value={editedCommentText}
-                    onChange={(e) => setEditedCommentText(e.target.value)}
-                    autoFocus
-                  />
-                  <Button onClick={handleSaveComment}>Сохранить</Button>
-                </>
-              ) : (
-                <>
-                  <strong>{comment.author}:</strong>{" "}
-                  <span
-                    onClick={() => {
-                      setEditingCommentIndex(index);
-                      setEditedCommentText(comment.text);
-                    }}
-                  >
-                    {comment.text}
-                  </span>
-                  <Button onClick={() => handleDeleteComment(index)}>
-                    Удалить
-                  </Button>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-        <form onSubmit={handleAddComment}>
-          <Input
-            {...register("newComment")}
-            placeholder="Добавить комментарий..."
-          />
-          <Button type="submit">Добавить</Button>
-        </form>
-      </div>
+      <Comments
+        todoId={todo.id}
+        comments={todo.comments}
+        addComment={addComment}
+        updateComment={updateComment}
+        deleteComment={deleteComment}
+        authorName={authorName}
+      />
     </Modal>
   );
 };

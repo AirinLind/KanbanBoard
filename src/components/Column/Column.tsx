@@ -8,15 +8,30 @@ import { IconButton } from "../../ui";
 import { Modal } from "../../ui";
 import styles from "./Column.module.scss";
 import { useKeyPress } from "../../hooks/useKeyPress";
+import { useSelector } from "react-redux";
+import { selectColumnById } from "../../store/ducks/column/selectors";
+import { RootState } from "../../store/store";
+import { selectTodosByColumnId } from "../../store/ducks/todo";
 
 export const Column = ({
-  column,
-  todos,
+  columnId,
   addTodo,
   updateColumnTitle,
   updateTodoTitle,
   setSelectedTodo,
 }: ColumnProps) => {
+  const column = useSelector((state: RootState) =>
+    selectColumnById(columnId)(state),
+  );
+
+  if (!column) {
+    return null;
+  }
+
+  const todos = useSelector((state: RootState) =>
+    selectTodosByColumnId(state, columnId),
+  );
+
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: {
       title: column.title,
@@ -26,13 +41,17 @@ export const Column = ({
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   function saveTitle(data: { title: string }) {
-    updateColumnTitle(column.id, data.title);
-    setIsModalOpen(false);
+    if (column) {
+      updateColumnTitle(column.id, data.title);
+      setIsModalOpen(false);
+    }
   }
 
   function handleEditClick() {
-    setIsModalOpen(true);
-    setValue("title", column.title);
+    if (column) {
+      setIsModalOpen(true);
+      setValue("title", column.title);
+    }
   }
 
   useKeyPress("Enter", () => {

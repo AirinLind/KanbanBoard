@@ -5,24 +5,25 @@ import { Popup } from "../Popup/Popup";
 import { NamePopup } from "../NamePopup/NamePopup";
 import { Todo } from "../Card/Card.types";
 import { ColumnType } from "../Column/Column.types";
-import { Comment } from "./Dask.types";
+import { CommentProps } from "../../store/ducks/comments";
 import { RootState } from "../../store/store";
 import {
   addTodo,
   updateTodoTitle,
   deleteTodo,
+  updateTodoDescription,
+} from "../../store/ducks/todo";
+import {
   addComment,
   updateComment,
   deleteComment,
-  updateTodoDescription,
-} from "../../store/ducks/todo";
+} from "../../store/ducks/comments";
 import { setUserName } from "../../store/ducks/user";
 import { updateColumnTitle } from "../../store/ducks/column";
 import styles from "./Dask.module.scss";
 
 export function Dask() {
   const columns = useSelector((state: RootState) => state.columns.columns);
-  const todos = useSelector((state: RootState) => state.todos.todos);
   const userName = useSelector((state: RootState) => state.user.userName);
   const dispatch = useDispatch();
 
@@ -47,16 +48,16 @@ export function Dask() {
     dispatch(addTodo(newTodo));
   }
 
-  function addCommentHandler(todoId: number, comment: Comment) {
+  function addCommentHandler(todoId: number, comment: CommentProps) {
     dispatch(addComment({ todoId, comment }));
   }
 
   function updateCommentHandler(
     todoId: number,
     commentIndex: number,
-    newComment: string,
+    newText: string,
   ) {
-    dispatch(updateComment({ todoId, commentIndex, newText: newComment }));
+    dispatch(updateComment({ todoId, commentIndex, newText }));
   }
 
   function deleteCommentHandler(todoId: number, commentIndex: number) {
@@ -91,8 +92,7 @@ export function Dask() {
         {columns.map((col: ColumnType) => (
           <Column
             key={col.id}
-            column={col}
-            todos={todos.filter((todo: Todo) => todo.columnId === col.id)}
+            columnId={col.id}
             addTodo={addTodoHandler}
             updateColumnTitle={updateColumnTitleHandler}
             updateTodoTitle={updateTodoTitleHandler}

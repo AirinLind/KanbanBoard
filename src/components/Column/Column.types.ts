@@ -6,8 +6,7 @@ export type ColumnType = {
 };
 
 export type ColumnProps = {
-  column: ColumnType;
-  todos: Todo[];
+  columnId: number;
   addTodo: (title: string, columnId: number) => void;
   updateColumnTitle: (id: number, newTitle: string) => void;
   updateTodoTitle: (todoId: number, newTitle: string) => void;

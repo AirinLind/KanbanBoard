@@ -5,6 +5,7 @@ import storage from "redux-persist/lib/storage";
 import * as duckColumns from "./column";
 import * as duckTodos from "./todo";
 import * as duckUser from "./user";
+import * as duckComments from "./comments";
 
 const persistConfig = {
   key: "root",
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   columns: duckColumns.reducer,
   todos: duckTodos.reducer,
   user: duckUser.reducer,
+  comments: duckComments.reducer,
 });
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);

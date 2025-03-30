@@ -1,20 +1,20 @@
+import {
+  AddComment,
+  UpdateComment,
+  DeleteComment,
+} from "../Comments/Comments.types";
 import { Todo } from "../Card/Card.types";
 import { ColumnType } from "../Column/Column.types";
-import { Comment } from "../Dask/Dask.types";
 
 export type PopupProps = {
   todo: Todo;
   closePopup: () => void;
-  addComment: (todoId: number, comment: Comment) => void;
+  addComment: AddComment;
   updateTodoTitle: (todoId: number, title: string) => void;
   updateTodoDescription: (todoId: number, description: string) => void;
   deleteTodo: (todoId: number) => void;
-  updateComment: (
-    todoId: number,
-    commentIndex: number,
-    newText: string,
-  ) => void;
-  deleteComment: (todoId: number, commentIndex: number) => void;
+  updateComment: UpdateComment;
+  deleteComment: DeleteComment;
   authorName: string;
   columns: ColumnType[];
 };

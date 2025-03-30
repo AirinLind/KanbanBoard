@@ -1,11 +1,11 @@
-import { Comment } from "../Dask/Dask.types";
+import { CommentProps } from "../../store/ducks/comments";
 
 export type Todo = {
   id: number;
   title: string;
   completed: boolean;
   columnId: number;
-  comments: Comment[];
+  comments: CommentProps[];
   author: string;
   description?: string;
 };

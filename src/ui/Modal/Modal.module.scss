@@ -13,13 +13,19 @@
 
 .popup {
   background: white;
-  padding: 24px;
+  padding: 15px 24px;
   width: 90%;
+  max-height: 580px;
+  overflow: auto;
   max-width: 600px;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   position: relative;
   animation: fadeIn 0.3s ease-in-out;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @keyframes fadeIn {

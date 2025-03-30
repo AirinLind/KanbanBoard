@@ -1,9 +1,9 @@
+import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
-import { Todo } from "./todo";
 
-export const selectTodos = (state: RootState): Todo[] => state.todos.todos;
+const selectTodosState = (state: RootState) => state.todos.todos;
 
-export const selectTodoById =
-  (id: number) =>
-  (state: RootState): Todo | undefined =>
-    state.todos.todos.find((todo: Todo) => todo.id === id);
+export const selectTodosByColumnId = createSelector(
+  [selectTodosState, (_: RootState, columnId: number) => columnId],
+  (todos, columnId) => todos.filter((todo) => todo.columnId === columnId),
+);

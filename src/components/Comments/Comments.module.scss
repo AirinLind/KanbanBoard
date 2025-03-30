@@ -1,0 +1,33 @@
+.comments {
+  margin-top: 7px;
+
+  ul {
+    border-radius: 10px;
+    margin: 5px 0;
+    padding: 8px;
+    max-height: 222px;
+    overflow-y: auto;
+  }
+
+  li {
+    list-style-type: none;
+    margin-bottom: 12px;
+    word-wrap: break-word;
+    word-break: break-word;
+  }
+
+  button {
+    display: block;
+    margin-top: 12px;
+    padding: 8px 12px;
+    background-color: #0079bf;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #005a8c;
+    }
+  }
+}
