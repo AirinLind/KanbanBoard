@@ -8,12 +8,7 @@ import styles from "./NamePopup.module.scss";
 
 export const NamePopup = ({ closePopup }: NamePopupProps) => {
   const dispatch = useDispatch();
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<{ name: string }>();
+c
 
   useEffect(() => {
     const storedName = localStorage.getItem("userName");
